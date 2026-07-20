@@ -119,6 +119,23 @@ for (const rule of ["Plan Mode", "fresh implementation subagent", "sequentially"
 }
 assert(router.includes("Only `using-matt-workflow` is implicit"));
 assert(router.includes("## Completion criteria"));
+for (const rule of [
+  "## Control mode",
+  "human-in-the-loop",
+  "autonomous",
+  "explicitly asks",
+  "self-approve",
+  "without pausing",
+  "take precedence over component instructions to ask, confirm, or wait",
+  "leave the tested, committed feature branch and worktree intact",
+  "unavailable credentials",
+  "stakeholder answers",
+  "irreversible or high-risk external action",
+]) {
+  assert(router.includes(rule), `router: missing autonomous-mode rule: ${rule}`);
+}
+assert(router.includes("Next gate: none — autonomous mode explicitly authorized"));
+assert(router.includes("Human-in-the-loop is the default"));
 
 const setup = await readFile(path.join(skillsRoot, "setup-matt-pocock-skills", "SKILL.md"), "utf8");
 assert(setup.indexOf("If `AGENTS.md` exists") < setup.indexOf("Else if `CLAUDE.md` exists"));
