@@ -1,0 +1,20 @@
+{
+  "name": "matt-workflow-dev",
+  "interface": {
+    "displayName": "Matt Workflow Dev"
+  },
+  "plugins": [
+    {
+      "name": "matt-workflow",
+      "source": {
+        "source": "local",
+        "path": "./plugins/matt-workflow"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

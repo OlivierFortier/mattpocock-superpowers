@@ -1,0 +1,36 @@
+{
+  "name": "matt-workflow",
+  "version": "0.1.0",
+  "description": "A guided software-delivery workflow built from Matt Pocock's skills and Superpowers worktree discipline.",
+  "author": {
+    "name": "Olivier Fortier",
+    "email": "olivier_fortier@outlook.com",
+    "url": "https://github.com/OlivierFortier"
+  },
+  "license": "MIT",
+  "keywords": [
+    "engineering",
+    "workflow",
+    "skills",
+    "tdd",
+    "code-review"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Matt Workflow",
+    "shortDescription": "Guided design, tickets, TDD, review, and delivery",
+    "longDescription": "Routes work through focused grilling, specifications, tracer-bullet tickets, fresh implementation agents, TDD, code review, and safe Git worktrees. Experimental branches cover batch interviews, questionnaires, setup wizards, and recurring workflows.",
+    "developerName": "Olivier Fortier",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Route this feature from idea to implementation.",
+      "Help me plan this large, foggy project.",
+      "Turn this recurring process into a workflow."
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "matt-workflow-dev",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "node scripts/sync-upstreams.mjs",
+    "sync:check": "node scripts/sync-upstreams.mjs --check",
+    "test": "node scripts/test-plugin.mjs && node scripts/sync-upstreams.mjs --check"
+  }
+}
