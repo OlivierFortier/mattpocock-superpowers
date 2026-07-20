@@ -1,6 +1,7 @@
 ---
 name: to-tickets
 description: "Split a plan into tracer-bullet tickets"
+disable-model-invocation: true
 ---
 
 # To Tickets

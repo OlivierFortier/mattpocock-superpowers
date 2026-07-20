@@ -1,6 +1,7 @@
 ---
 name: prototype
 description: "Prototype to answer a design question"
+disable-model-invocation: true
 ---
 
 # Prototype

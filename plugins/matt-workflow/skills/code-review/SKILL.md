@@ -1,6 +1,7 @@
 ---
 name: code-review
 description: "Review a diff on standards and spec"
+disable-model-invocation: true
 ---
 
 Two-axis review of the diff between `HEAD` and a fixed point the user supplies:

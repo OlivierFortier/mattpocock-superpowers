@@ -1,6 +1,7 @@
 ---
 name: loop-me
 description: "Spec the workflows you want to build"
+disable-model-invocation: true
 ---
 
 Run a stateful `[$matt-workflow:grilling](../grilling/SKILL.md)` session whose only output is **workflow** specs. Use the grilling discipline — relentless, one question at a time, a recommended answer attached to each — aimed at the vocabulary and goal below. Create, edit, and delete specs as the grilling resolves things.

@@ -124,7 +124,8 @@ function normalizeFrontmatter(text, expectedName, humanSummary) {
   const description = lines.find((line) => line.startsWith("description:"));
   if (!name || !description) throw new Error("SKILL.md frontmatter needs name and description");
   if (name.slice(5).trim() !== expectedName) throw new Error(`${expectedName} has mismatched skill metadata`);
-  return `---\n${name}\ndescription: ${JSON.stringify(humanSummary)}\n---\n${text.slice(match[0].length)}`;
+  const invocation = expectedName === "using-matt-workflow" ? "" : "disable-model-invocation: true\n";
+  return `---\n${name}\ndescription: ${JSON.stringify(humanSummary)}\n${invocation}---\n${text.slice(match[0].length)}`;
 }
 
 function qualifySkillReferences(text) {

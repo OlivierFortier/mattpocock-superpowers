@@ -1,6 +1,7 @@
 ---
 name: setup-matt-pocock-skills
 description: "Configure a repo for the skills"
+disable-model-invocation: true
 ---
 
 # Setup Matt Pocock's Skills

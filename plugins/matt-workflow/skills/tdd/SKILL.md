@@ -1,6 +1,7 @@
 ---
 name: tdd
 description: "Test-driven red-green-refactor"
+disable-model-invocation: true
 ---
 
 # Test-Driven Development

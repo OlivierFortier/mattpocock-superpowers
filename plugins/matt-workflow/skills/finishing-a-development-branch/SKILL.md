@@ -1,6 +1,7 @@
 ---
 name: finishing-a-development-branch
 description: "Safely finish and integrate a development branch"
+disable-model-invocation: true
 ---
 
 # Finishing a Development Branch

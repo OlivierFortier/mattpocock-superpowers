@@ -1,6 +1,7 @@
 ---
 name: batch-grill-me
 description: "Sharpen a plan a round of questions at a time"
+disable-model-invocation: true
 ---
 
 Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.

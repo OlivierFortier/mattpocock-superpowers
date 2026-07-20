@@ -1,11 +1,23 @@
 import assert from "node:assert/strict";
 import { access, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const pluginRoot = path.join(root, "plugins", "matt-workflow");
 const skillsRoot = path.join(pluginRoot, "skills");
+const copilotManifest = JSON.parse(await readFile(path.join(pluginRoot, "plugin.json"), "utf8"));
+assert.equal(copilotManifest.name, "matt-workflow");
+assert.equal(copilotManifest.version, "0.1.0");
+assert.equal(copilotManifest.skills, "skills/");
+assert.equal(copilotManifest.agents, "copilot/agents/");
+assert.equal(copilotManifest.license, "MIT");
+assert.equal("interface" in copilotManifest, false);
+const copilotAgent = (await readFile(path.join(pluginRoot, "copilot", "agents", "matt-workflow.agent.md"), "utf8"))
+  .replaceAll("\r\n", "\n");
+assert(copilotAgent.startsWith("---\nname: matt-workflow\n"));
+assert(copilotAgent.includes("disable-model-invocation: true"));
+assert(copilotAgent.includes("$matt-workflow:<skill-name>"));
 const skillNames = [
   "batch-grill-me",
   "code-review",
@@ -55,6 +67,65 @@ assert.deepEqual(marketplace.plugins[0], {
   policy: { installation: "AVAILABLE", authentication: "ON_INSTALL" },
   category: "Developer Tools",
 });
+const copilotMarketplace = JSON.parse(await readFile(path.join(root, ".github", "plugin", "marketplace.json"), "utf8"));
+assert.equal(copilotMarketplace.name, "matt-workflow-marketplace");
+assert.equal(copilotMarketplace.owner.name, "Olivier Fortier");
+assert.deepEqual(copilotMarketplace.plugins[0], {
+  name: "matt-workflow",
+  description: "A guided software-delivery workflow built from Matt Pocock's skills and Superpowers worktree discipline.",
+  version: "0.1.0",
+  source: "./plugins/matt-workflow",
+  author: {
+    name: "Olivier Fortier",
+    email: "olivier.fortier@outlook.com",
+    url: "https://github.com/OlivierFortier",
+  },
+  license: "MIT",
+  keywords: ["engineering", "workflow", "skills", "tdd", "code-review"],
+  category: "Developer Tools",
+});
+
+const claudeManifest = JSON.parse(await readFile(path.join(pluginRoot, ".claude-plugin", "plugin.json"), "utf8"));
+assert.equal(claudeManifest.name, "matt-workflow");
+assert.equal(claudeManifest.version, "0.1.0");
+assert.equal(claudeManifest.skills, "./skills/");
+assert.deepEqual(claudeManifest.agents, ["./claude/agents/matt-workflow.md"]);
+assert.equal(claudeManifest.license, "MIT");
+const claudeAgent = (await readFile(path.join(pluginRoot, "claude", "agents", "matt-workflow.md"), "utf8"))
+  .replaceAll("\r\n", "\n");
+assert(claudeAgent.startsWith("---\nname: matt-workflow\n"));
+assert(claudeAgent.includes("using-matt-workflow"));
+assert(!claudeAgent.includes("disable-model-invocation:"));
+assert(!claudeAgent.includes("user-invocable:"));
+
+const claudeMarketplace = JSON.parse(await readFile(path.join(root, ".claude-plugin", "marketplace.json"), "utf8"));
+assert.equal(claudeMarketplace.name, "matt-workflow-marketplace");
+assert.equal(claudeMarketplace.plugins.length, 1);
+assert.equal(claudeMarketplace.plugins[0].name, "matt-workflow");
+assert.equal(claudeMarketplace.plugins[0].source, "./plugins/matt-workflow");
+
+const piPackage = JSON.parse(await readFile(path.join(pluginRoot, "package.json"), "utf8"));
+assert.equal(piPackage.name, "matt-workflow");
+assert.equal(piPackage.keywords.includes("pi-package"), true);
+assert.deepEqual(piPackage.pi, { skills: ["./skills"] });
+assert.equal(piPackage.main, "./opencode/index.ts");
+assert.deepEqual(piPackage.dependencies, { "@opencode-ai/plugin": "1.18.4" });
+
+const opencodeLoader = (await readFile(path.join(pluginRoot, "opencode", "skill-loader.mjs"), "utf8"))
+  .replaceAll("\r\n", "\n");
+const opencodeEntrypoint = (await readFile(path.join(pluginRoot, "opencode", "index.ts"), "utf8"))
+  .replaceAll("\r\n", "\n");
+assert(opencodeLoader.includes("export async function discoverSkillNames"));
+assert(opencodeLoader.includes("export async function loadSkill"));
+assert(opencodeEntrypoint.includes("matt_workflow_skill"));
+assert(opencodeEntrypoint.includes("@opencode-ai/plugin"));
+const { discoverSkillNames, loadSkill } = await import(
+  pathToFileURL(path.join(pluginRoot, "opencode", "skill-loader.mjs")).href,
+);
+assert.deepEqual(await discoverSkillNames(), skillNames);
+assert.equal(await loadSkill("using-matt-workflow"), await readFile(path.join(skillsRoot, "using-matt-workflow", "SKILL.md"), "utf8"));
+await assert.rejects(() => loadSkill("missing-skill"), /Unknown skill/);
+await assert.rejects(() => loadSkill("..\\package.json"), /Invalid skill name/);
 
 const actualSkills = (await readdir(skillsRoot, { withFileTypes: true }))
   .filter((entry) => entry.isDirectory())
@@ -67,10 +138,15 @@ for (const name of skillNames) {
   const frontmatter = skill.match(/^---\n([\s\S]*?)\n---\n/);
   assert(frontmatter, `${name}: invalid frontmatter`);
   const keys = frontmatter[1].split("\n").map((line) => line.split(":", 1)[0]);
-  assert.deepEqual(keys, ["name", "description"], `${name}: frontmatter must contain only name and description`);
+  const expectedKeys = name === "using-matt-workflow"
+    ? ["name", "description"]
+    : ["name", "description", "disable-model-invocation"];
+  assert.deepEqual(keys, expectedKeys, `${name}: invalid Copilot skill frontmatter`);
   assert.equal(frontmatter[1].split("\n")[0], `name: ${name}`);
+  if (name !== "using-matt-workflow") {
+    assert.match(frontmatter[1], /disable-model-invocation: true/);
+  }
   assert(!skill.includes("[TODO"), `${name}: unresolved TODO placeholder`);
-  assert(!skill.includes("disable-model-invocation"), `${name}: non-portable invocation metadata`);
 
   if (name !== "using-matt-workflow") {
     assert(!skill.includes("## Matt Workflow boundary"), `${name}: duplicated router boundary`);

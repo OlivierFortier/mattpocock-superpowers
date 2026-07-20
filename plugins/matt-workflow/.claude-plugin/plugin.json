@@ -1,0 +1,22 @@
+{
+  "name": "matt-workflow",
+  "version": "0.1.0",
+  "description": "A guided software-delivery workflow built from Matt Pocock's skills and Superpowers worktree discipline.",
+  "author": {
+    "name": "Olivier Fortier",
+    "email": "olivier.fortier@outlook.com",
+    "url": "https://github.com/OlivierFortier"
+  },
+  "license": "MIT",
+  "keywords": [
+    "engineering",
+    "workflow",
+    "skills",
+    "tdd",
+    "code-review"
+  ],
+  "skills": "./skills/",
+  "agents": [
+    "./claude/agents/matt-workflow.md"
+  ]
+}

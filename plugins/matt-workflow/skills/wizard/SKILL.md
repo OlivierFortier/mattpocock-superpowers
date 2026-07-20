@@ -1,6 +1,7 @@
 ---
 name: wizard
 description: "Generate an interactive setup wizard"
+disable-model-invocation: true
 ---
 
 # Wizard

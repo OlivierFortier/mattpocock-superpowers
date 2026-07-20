@@ -1,6 +1,7 @@
 ---
 name: using-git-worktrees
 description: "Create or reuse an isolated Git worktree"
+disable-model-invocation: true
 ---
 
 # Using Git Worktrees

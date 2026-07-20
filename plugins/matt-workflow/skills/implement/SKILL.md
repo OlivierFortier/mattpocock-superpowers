@@ -1,6 +1,7 @@
 ---
 name: implement
 description: "Build work from a spec or tickets"
+disable-model-invocation: true
 ---
 
 Implement the work described by the user in the spec or tickets.

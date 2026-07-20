@@ -1,6 +1,7 @@
 ---
 name: research
 description: "Research from high-trust sources"
+disable-model-invocation: true
 ---
 
 Spin up a **background agent** to do the research, so you keep working while it reads.

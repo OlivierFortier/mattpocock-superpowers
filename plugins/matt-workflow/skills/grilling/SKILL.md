@@ -1,6 +1,7 @@
 ---
 name: grilling
 description: "Stress-test thinking one question at a time"
+disable-model-invocation: true
 ---
 
 Interview me relentlessly about every aspect of this until we reach a shared understanding. Walk down each branch of the decision tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
