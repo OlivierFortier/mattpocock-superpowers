@@ -63,7 +63,7 @@ const actualSkills = (await readdir(skillsRoot, { withFileTypes: true }))
 assert.deepEqual(actualSkills, skillNames);
 
 for (const name of skillNames) {
-  const skill = await readFile(path.join(skillsRoot, name, "SKILL.md"), "utf8");
+  const skill = (await readFile(path.join(skillsRoot, name, "SKILL.md"), "utf8")).replaceAll("\r\n", "\n");
   const frontmatter = skill.match(/^---\n([\s\S]*?)\n---\n/);
   assert(frontmatter, `${name}: invalid frontmatter`);
   const keys = frontmatter[1].split("\n").map((line) => line.split(":", 1)[0]);
