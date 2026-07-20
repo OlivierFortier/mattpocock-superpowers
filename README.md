@@ -119,11 +119,11 @@ Publish the repository publicly at that GitHub URL before sharing this command; 
 If you prefer a platform-specific wrapper, run it directly from GitHub:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/OlivierFortier/mattpocock-superpowers/main/scripts/install-skills.sh | bash
+curl -fsSL https://raw.githubusercontent.com/OlivierFortier/mattpocock-superpowers/master/scripts/install-skills.sh | bash
 ```
 
 ```powershell
-irm https://raw.githubusercontent.com/OlivierFortier/mattpocock-superpowers/main/scripts/install-skills.ps1 | iex
+irm https://raw.githubusercontent.com/OlivierFortier/mattpocock-superpowers/master/scripts/install-skills.ps1 | iex
 ```
 
 The same scripts can also be run from a checkout:
