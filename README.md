@@ -39,7 +39,7 @@ Writes: <anticipated artifacts or none>
 
 ## Install
 
-The plugin is currently distributed from this repository. Replace an existing checkout with a fresh one when you want to update it.
+The repository is the distribution source. Users can install directly from GitHub through their agent's native marketplace or the generic `skills` CLI; no checkout is required.
 
 ```text
 https://github.com/OlivierFortier/mattpocock-superpowers
@@ -106,64 +106,35 @@ Use the `matt-workflow` agent/router, or invoke a qualified skill such as:
 /matt-workflow/grilling
 ```
 
-### OpenCode
+### Generic agent skills
 
-See the [OpenCode plugin documentation](https://dev.opencode.ai/docs/plugins/).
-
-OpenCode support is currently a checked-in local adapter rather than a published npm package. From a checkout of this repository, create this layout in the project where OpenCode should load the plugin:
-
-```text
-.opencode/
-├── package.json
-└── plugins/
-    ├── matt-workflow/
-    │   ├── index.ts
-    │   └── skill-loader.mjs
-    └── skills/
-        └── <the Matt Workflow skill directories>
-```
-
-Copy these sources into that layout:
-
-```text
-plugins/matt-workflow/opencode/index.ts         → .opencode/plugins/matt-workflow/index.ts
-plugins/matt-workflow/opencode/skill-loader.mjs → .opencode/plugins/matt-workflow/skill-loader.mjs
-plugins/matt-workflow/skills/                   → .opencode/plugins/skills/
-```
-
-Merge this dependency into `.opencode/package.json` if it is not already present:
-
-```json
-{
-  "dependencies": {
-    "@opencode-ai/plugin": "1.18.4"
-  }
-}
-```
-
-OpenCode loads the local adapter at startup. The adapter exposes the `matt_workflow_skill` tool, which loads one of the shared skills by name.
-
-### Pi
-
-See the [Pi skills documentation](https://pi.dev/docs/latest/skills).
-
-Pi support is currently provided by the package metadata in `plugins/matt-workflow/package.json`. Install that local package from a checkout:
+The shared workflow is packaged as standard `SKILL.md` agent skills. No checkout is required: Vercel's [`skills` CLI](https://skills.sh/docs/cli) fetches the public GitHub repository directly and installs the skills globally:
 
 ```bash
-pi install /path/to/mattpocock-superpowers/plugins/matt-workflow
+npx --yes skills add OlivierFortier/mattpocock-superpowers --all --copy --global
 ```
 
-For a project-local configuration, add the shared skills directory to Pi's settings instead:
+Publish the repository publicly at that GitHub URL before sharing this command; private repositories require authenticated Git access.
 
-```json
-{
-  "skills": [
-    "/path/to/mattpocock-superpowers/plugins/matt-workflow/skills"
-  ]
-}
+If you prefer a platform-specific wrapper, run it directly from GitHub:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/OlivierFortier/mattpocock-superpowers/main/scripts/install-skills.sh | bash
 ```
 
-Use the `using-matt-workflow` skill to route work, or load an individual skill such as `grilling` with Pi's skill command syntax.
+```powershell
+irm https://raw.githubusercontent.com/OlivierFortier/mattpocock-superpowers/main/scripts/install-skills.ps1 | iex
+```
+
+The same scripts can also be run from a checkout:
+
+```powershell
+pwsh -File .\scripts\install-skills.ps1
+```
+
+Both wrappers install copied files globally across the supported agent directories. Re-run the command to update them.
+
+Use `npx skills add <source> --skill <name>` when only one workflow skill is needed. The CLI supports many agents through the common skills format; the repository's plugin-specific adapters remain available through their native plugin flows above.
 
 ## Use it
 

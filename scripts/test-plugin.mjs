@@ -237,4 +237,17 @@ const wizardTemplate = await readFile(path.join(skillsRoot, "wizard", "template.
 assert(!wizardTemplate.includes("\r"), "wizard template must use LF line endings");
 assert((await readFile(path.join(root, ".gitattributes"), "utf8")).includes("*.sh text eol=lf"));
 
+for (const script of ["install-skills.sh", "install-skills.ps1"]) {
+  const source = await readFile(path.join(root, "scripts", script), "utf8");
+  assert(source.includes("skills add"), `${script}: missing skills CLI install`);
+  assert(source.includes("OlivierFortier/mattpocock-superpowers"), `${script}: must install from the public repository`);
+  assert(source.includes("--all"), `${script}: must install all skills`);
+  assert(source.includes("--copy"), `${script}: must use portable copied files`);
+  assert(source.includes("--global"), `${script}: must install globally`);
+  assert(!/pi\s+install|pi\.cmd|opencode/i.test(source), `${script}: must remain host-agnostic`);
+}
+for (const script of ["install-pi-opencode.mjs", "install-pi-opencode.sh", "install-pi-opencode.ps1"]) {
+  await assert.rejects(access(path.join(root, "scripts", script)));
+}
+
 console.log(`Structural checks passed (${skillNames.length} skills).`);
