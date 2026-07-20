@@ -131,6 +131,11 @@ for (const rule of [
   "unavailable credentials",
   "stakeholder answers",
   "irreversible or high-risk external action",
+  "## Autonomous Wayfinder",
+  "one ticket per fresh agent",
+  "until the frontier and fog are empty",
+  "route the completed spec through `$matt-workflow:to-tickets` and delivery",
+  "Before either delivery implementation path",
 ]) {
   assert(router.includes(rule), `router: missing autonomous-mode rule: ${rule}`);
 }

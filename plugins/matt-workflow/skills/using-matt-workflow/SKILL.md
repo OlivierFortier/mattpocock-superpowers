@@ -42,21 +42,21 @@ In autonomous mode:
 
 Choose the smallest route that fits:
 
-- **delivery** — A feature or concrete engineering change. If the repo lacks `docs/agents/issue-tracker.md`, first delegate to `$matt-workflow:setup-matt-pocock-skills`. Use `$matt-workflow:grill-with-docs` when decisions remain. Use `$matt-workflow:prototype`, `$matt-workflow:research`, or `$matt-workflow:handoff` only when they answer a real blocker. Send genuinely small, settled work to `$matt-workflow:implement`; otherwise use `$matt-workflow:to-spec`, then `$matt-workflow:to-tickets`. Require design and ticket approval in human-in-the-loop mode; self-approve both after internal review in autonomous mode.
-- **wayfinder** — Only for work too large or foggy to hold in one session. Delegate to `$matt-workflow:wayfinder`. For a multi-step human Task ticket, offer the experimental manual-wizard route. Resolve decision tickets, then collapse the map through `$matt-workflow:to-spec`. Direct implementation is reserved for efforts proven genuinely small.
-- **workflow-design** — A recurring personal or operational activity. Announce that `$matt-workflow:loop-me` is experimental, pass its human gate or autonomous authorization, and delegate to it. If the original request includes implementation, route its decision-complete workflow spec back into delivery or wayfinder. When implementation is outside the original request, complete at the workflow spec.
-- **manual-wizard** — A human-operated setup, migration, credential, or third-party procedure. Announce that `$matt-workflow:wizard` is experimental, pass its human gate or autonomous authorization, and delegate to it. Generate the Bash script in the OS temporary directory unless the user asks to retain it. Return the path for human execution; automatic execution is forbidden in both modes.
-- **questionnaire** — The user cannot answer and an identifiable stakeholder can. Announce that `$matt-workflow:to-questionnaire` is experimental, pass its human gate or autonomous authorization, and delegate to it. Record the active issue, decision, or spec as return context; pause and resume that same decision when answers arrive.
+- **delivery** — A feature or concrete engineering change. Use `$matt-workflow:grill-with-docs` when decisions remain. Use `$matt-workflow:prototype`, `$matt-workflow:research`, or `$matt-workflow:handoff` only when they answer a real blocker. Send genuinely small, settled work to `$matt-workflow:implement`; otherwise use `$matt-workflow:to-spec`, then `$matt-workflow:to-tickets`. Enter **Start implementation** before either path writes code.
+- **wayfinder** — Only for work too large or foggy to hold in one session. Delegate to `$matt-workflow:wayfinder`. For a multi-step human Task ticket, offer the experimental manual-wizard route. Resolve decision tickets, then collapse the map through `$matt-workflow:to-spec`. Direct implementation is reserved for efforts proven genuinely small. In autonomous mode, use **Autonomous Wayfinder** below.
+- **workflow-design** — A recurring personal or operational activity. Announce and activate experimental `$matt-workflow:loop-me` under the current control mode. If the original request includes implementation, route its decision-complete workflow spec back into delivery or wayfinder. When implementation is outside the original request, complete at the workflow spec.
+- **manual-wizard** — A human-operated setup, migration, credential, or third-party procedure. Announce and activate experimental `$matt-workflow:wizard` under the current control mode. Generate the Bash script in the OS temporary directory unless the user asks to retain it. Return the path for human execution; automatic execution is forbidden in both modes.
+- **questionnaire** — The user cannot answer and an identifiable stakeholder can. Announce and activate experimental `$matt-workflow:to-questionnaire` under the current control mode. Record the active issue, decision, or spec as return context; pause and resume that same decision when answers arrive.
 
 If multiple routes appear plausible and the choice materially changes the work, choose and record the smallest safe route in autonomous mode; otherwise recommend it and ask one question.
 
 ## Load subflow instructions
 
-After choosing a route and passing its human gate or autonomous authorization, read the linked skill files required by that branch before acting:
+After choosing a route and receiving its current control-mode authorization, read the linked skill files required by that branch before acting:
 
 - Delivery: [setup](../setup-matt-pocock-skills/SKILL.md), [grill with docs](../grill-with-docs/SKILL.md), [grilling](../grilling/SKILL.md), [domain modeling](../domain-modeling/SKILL.md), [handoff](../handoff/SKILL.md), [prototype](../prototype/SKILL.md), [research](../research/SKILL.md), [to spec](../to-spec/SKILL.md), [to tickets](../to-tickets/SKILL.md), [implement](../implement/SKILL.md), [TDD](../tdd/SKILL.md), and [code review](../code-review/SKILL.md).
 - Wayfinding: [wayfinder](../wayfinder/SKILL.md).
-- Experimental: [batch grilling](../batch-grill-me/SKILL.md), [questionnaire](../to-questionnaire/SKILL.md), [wizard](../wizard/SKILL.md), and [loop design](../loop-me/SKILL.md). Read these after the human gate or autonomous authorization.
+- Experimental: [batch grilling](../batch-grill-me/SKILL.md), [questionnaire](../to-questionnaire/SKILL.md), [wizard](../wizard/SKILL.md), and [loop design](../loop-me/SKILL.md). Read these after current control-mode authorization.
 - Git lifecycle: [worktrees](../using-git-worktrees/SKILL.md) and [finish branch](../finishing-a-development-branch/SKILL.md).
 
 Only `using-matt-workflow` is implicit. Compose a route by reading relative references after their gates, then continue without asking the user to invoke each component.
@@ -65,16 +65,27 @@ Only `using-matt-workflow` is implicit. Compose a route by reading relative refe
 
 Default to `$matt-workflow:grilling`, one question at a time. When at least two independent decision-frontier questions are ready now, use experimental `$matt-workflow:batch-grill-me`. In human-in-the-loop mode, offer it and wait for one yes/no gate; autonomous authorization or an explicit batch request counts as approval. Use batch mode only when that threshold is met.
 
+## Autonomous Wayfinder
+
+Replace Wayfinder's session stops with one ticket per fresh agent while preserving one-ticket context boundaries:
+
+1. Chart the map, then give each ready Decision, prototype, task, or research ticket to a fresh agent. Research tickets may run in parallel; process other tickets sequentially.
+2. After each resolution, update the map, graduate newly visible fog, and continue until the frontier and fog are empty.
+3. Collapse the clear map through `$matt-workflow:to-spec`. If the original request includes implementation, route the completed spec through `$matt-workflow:to-tickets` and delivery; otherwise report the completed spec.
+
+## Start implementation
+
+Before either delivery implementation path, delegate to `$matt-workflow:using-git-worktrees` once for the delivery run. Respect an existing isolated worktree, verify its baseline, and run `$matt-workflow:setup-matt-pocock-skills` there first when `docs/agents/issue-tracker.md` is missing.
+
 ## Execute tickets
 
-After ticket approval or autonomous self-approval:
+After tickets receive current control-mode authorization:
 
-1. Delegate to `$matt-workflow:using-git-worktrees` once for the delivery run. Respect an existing isolated worktree and verify the baseline.
-2. Work blockers first. Give each ready ticket to a fresh implementation subagent with only the ticket, approved spec, domain docs, and repository instructions.
-3. Require the subagent to use `$matt-workflow:implement`, which drives `$matt-workflow:tdd` and commits its ticket.
-4. Run `$matt-workflow:code-review` for specification compliance and code quality. Resolve findings before starting the next ticket.
-5. After all tickets, run one whole-spec review and the full test suite.
-6. In human-in-the-loop mode, delegate to `$matt-workflow:finishing-a-development-branch` and wait for the user's branch-completion choice. In autonomous mode, leave the tested, committed feature branch and worktree intact and report them.
+1. Work blockers first. Give each ready ticket to a fresh implementation subagent with only the ticket, approved spec, domain docs, and repository instructions.
+2. Require the subagent to use `$matt-workflow:implement`, which drives `$matt-workflow:tdd` and commits its ticket.
+3. Run `$matt-workflow:code-review` for specification compliance and code quality. Resolve findings before starting the next ticket.
+4. After all tickets, run one whole-spec review and the full test suite.
+5. In human-in-the-loop mode, delegate to `$matt-workflow:finishing-a-development-branch` and wait for the user's branch-completion choice. In autonomous mode, leave the tested, committed feature branch and worktree intact and report them.
 
 Run ephemeral ticket subagents sequentially in the same feature worktree. Keep durable state in approved specs, issue tickets, and commits.
 
