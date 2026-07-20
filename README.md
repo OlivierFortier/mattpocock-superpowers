@@ -1,8 +1,6 @@
 # Matt Workflow
 
-Matt Workflow is a guided software-delivery plugin for coding agents. It combines selected [Matt Pocock skills](https://github.com/mattpocock/skills) with [Superpowers worktree discipline](https://github.com/obra/superpowers) to help move work from an unclear request to a tested, reviewed, handoff-ready change.
-
-It keeps the human's decisions visible instead of treating planning as hidden agent work.
+Matt Workflow is a software-delivery plugin for coding agents. It combines selected [Matt Pocock skills](https://github.com/mattpocock/skills) with [Superpowers worktree discipline](https://github.com/obra/superpowers) to take work from an unclear request to a tested, reviewed, handoff-ready change while keeping human decisions visible.
 
 ## Workflow
 
@@ -12,23 +10,23 @@ request → decisions → spec → tickets → implementation → TDD → review
 
 The `using-matt-workflow` skill is the router. It chooses the smallest route that fits:
 
-- **Delivery** for a concrete feature or engineering change.
-- **Wayfinder** for an effort too large or foggy for one session.
-- **Workflow design** for a recurring personal or operational process.
-- **Manual wizard** for a human-operated setup, migration, or credential procedure.
-- **Questionnaire** when an identifiable stakeholder must answer an unresolved question.
+- **Delivery** — a concrete feature or engineering change.
+- **Wayfinder** — an effort too large or foggy for one session.
+- **Workflow design** — a recurring personal or operational process.
+- **Manual wizard** — a human-operated setup, migration, or credential procedure.
+- **Questionnaire** — an unresolved question that needs a specific stakeholder's answer.
 
-Small, settled requests may go directly to implementation. Larger requests are shaped through decisions, a decision-complete spec, and independently implementable tickets before code is written.
+Small, settled requests go directly to implementation. Larger or foggier work is shaped through decisions, a decision-complete spec, and independently implementable tickets before code is written.
 
 ### Control modes
 
-Human-in-the-loop is the default. The workflow pauses at design, ticket, experimental-capability, and branch-completion gates so the user can make the relevant decision.
+Human-in-the-loop is the default. The workflow pauses at design, ticket, experimental-capability, and branch-completion gates for the relevant user decision.
 
-Autonomous mode is available only when the user explicitly asks to run the workflow autonomously or end to end. In that mode, the agent may make scoped, reversible workflow decisions, but it still pauses for unavailable credentials, stakeholder answers, or authority for irreversible or high-risk external actions.
+Autonomous mode is available only when the user explicitly asks to run the workflow autonomously or end to end. The agent may then make scoped, reversible decisions, but still pauses for unavailable credentials, stakeholder answers, or authority for irreversible or high-risk external actions.
 
-Plan Mode is read-only. It can inspect the repository and present proposed artifacts, but it does not write files, apply patches, or change external state.
+Plan Mode is read-only: it can inspect the repository and present proposed artifacts, but it does not write files, apply patches, or change external state.
 
-At the beginning of a routed workflow, the router reports:
+At the start of a routed workflow, the router reports:
 
 ```text
 Route: delivery | wayfinder | workflow-design | manual-wizard | questionnaire
@@ -39,7 +37,7 @@ Writes: <anticipated artifacts or none>
 
 ## Install
 
-The repository is the distribution source. Users can install directly from GitHub through their agent's native marketplace or the generic `skills` CLI; no checkout is required.
+Install directly from GitHub through your agent's native marketplace or the generic `skills` CLI. A checkout is not required.
 
 ```text
 https://github.com/OlivierFortier/mattpocock-superpowers
@@ -65,13 +63,13 @@ codex
 /plugins
 ```
 
-Start a new session after installation so the bundled skills are discovered. In the ChatGPT desktop app, the same repository marketplace can be selected from Plugins while using the Codex surface.
+Start a new session after installation so Codex discovers the bundled skills. In the ChatGPT desktop app, select the same repository marketplace from Plugins while using Codex.
 
 ### Claude Code
 
 See [Discover and install Claude Code plugins](https://code.claude.com/docs/en/discover-plugins).
 
-Inside Claude Code, add the repository marketplace, install the plugin, and reload it:
+Inside Claude Code, add the repository marketplace, install the plugin, then reload it:
 
 ```text
 /plugin marketplace add OlivierFortier/mattpocock-superpowers
@@ -79,7 +77,7 @@ Inside Claude Code, add the repository marketplace, install the plugin, and relo
 /reload-plugins
 ```
 
-The router can be invoked as `/matt-workflow:using-matt-workflow`. Other skills use the same plugin namespace, for example `/matt-workflow:grilling`.
+Invoke the router as `/matt-workflow:using-matt-workflow`. Other skills use the same plugin namespace, for example `/matt-workflow:grilling`.
 
 For local development or testing, load the checkout directly:
 
@@ -91,7 +89,7 @@ claude --plugin-dir ./plugins/matt-workflow
 
 See [Finding and installing plugins for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing).
 
-Register the repository marketplace and install the plugin:
+Register the repository marketplace, then install the plugin:
 
 ```bash
 copilot plugin marketplace add OlivierFortier/mattpocock-superpowers
@@ -99,7 +97,7 @@ copilot plugin install matt-workflow@matt-workflow-marketplace
 copilot plugin list
 ```
 
-Use the `matt-workflow` agent/router, or invoke a qualified skill such as:
+Use the `matt-workflow` agent/router or invoke a qualified skill such as:
 
 ```text
 /matt-workflow/using-matt-workflow
@@ -108,31 +106,25 @@ Use the `matt-workflow` agent/router, or invoke a qualified skill such as:
 
 ### Generic agent skills
 
-The shared workflow is packaged as standard `SKILL.md` agent skills. No checkout is required: Vercel's [`skills` CLI](https://skills.sh/docs/cli) fetches the public GitHub repository directly and installs the skills globally:
+The shared workflow is packaged as standard `SKILL.md` files. Vercel's [`skills` CLI](https://skills.sh/docs/cli) fetches the public GitHub repository and installs the skills globally:
 
 ```bash
 npx --yes skills add OlivierFortier/mattpocock-superpowers --all --copy --global
 ```
 
-Use `npx skills add <source> --skill <name>` when only one workflow skill is needed. The CLI supports many agents through the common skills format; the repository's plugin-specific adapters remain available through their native plugin flows above.
+Use `npx skills add <source> --skill <name>` to install one workflow skill. The repository's plugin-specific adapters remain available through the native plugin flows above.
 
 ## Use it
 
-After installation, describe the outcome you want. Examples:
+After installation, describe the outcome you want:
 
 ```text
 Route this feature from idea to implementation.
-```
-
-```text
 Help me plan this large, foggy project.
-```
-
-```text
 Turn this recurring process into a workflow.
 ```
 
-The router selects the route and states the next gate before acting. You can also request a specific subflow when you already know which one you need:
+The router selects the route and reports the next gate. You can also request a specific subflow:
 
 ```text
 Use grilling to stress-test this design one question at a time.
@@ -192,7 +184,7 @@ Experimental skills are opt-in and must be announced before use. A wizard is ret
 
 ## What the plugin changes
 
-Matt Workflow contributes:
+Matt Workflow provides:
 
 - Shared workflow skills under `plugins/matt-workflow/skills/`.
 - A Codex plugin manifest at `plugins/matt-workflow/.codex-plugin/plugin.json`.
@@ -201,13 +193,13 @@ Matt Workflow contributes:
 - An OpenCode adapter under `plugins/matt-workflow/opencode/`.
 - Pi package metadata in `plugins/matt-workflow/package.json`.
 
-It does not currently add MCP servers, connectors, apps, or lifecycle hooks. The host's permissions, sandbox, approval policy, authentication, and external integrations still apply.
+It does not add MCP servers, connectors, apps, or lifecycle hooks. The host's permissions, sandbox, approval policy, authentication, and external integrations still apply.
 
 ## Develop and verify
 
 This repository is a packaging and adaptation project. It is not a product application.
 
-Install the development dependency tree and run the complete check:
+Install dependencies and run the complete check:
 
 ```bash
 npm install
