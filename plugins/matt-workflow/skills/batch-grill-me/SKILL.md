@@ -1,6 +1,6 @@
 ---
 name: batch-grill-me
-description: "Perform only the batch-grill-me subflow when directly requested or delegated by Matt Workflow. A relentless interview that asks every frontier question at once, round by round."
+description: "Sharpen a plan a round of questions at a time"
 ---
 
 Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.
@@ -13,8 +13,6 @@ Finding *facts* is your job, never the user's. When a frontier question needs a 
 
 The session is done when the frontier is empty: every branch of the design tree visited, nothing left silently assumed. Do not act on it until the user confirms you have reached a shared understanding.
 
-> **Experimental:** This in-progress skill is pinned at `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`. Before acting, require either the user's direct invocation of this skill or an explicit yes to the router's experimental gate. Otherwise announce the status, ask once for approval, and stop until the user answers.
+> **Experimental:** This in-progress skill is pinned at `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`. Announce that status before use.
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:batch-grill-me` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

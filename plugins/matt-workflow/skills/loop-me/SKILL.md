@@ -1,6 +1,6 @@
 ---
 name: loop-me
-description: "Perform only the loop-me subflow when directly requested or delegated by Matt Workflow. Grill me about specs for the workflows I want to build, within this workspace."
+description: "Spec the workflows you want to build"
 ---
 
 Run a stateful `[$matt-workflow:grilling](../grilling/SKILL.md)` session whose only output is **workflow** specs. Use the grilling discipline — relentless, one question at a time, a recommended answer attached to each — aimed at the vocabulary and goal below. Create, edit, and delete specs as the grilling resolves things.
@@ -29,8 +29,6 @@ A workflow spec is done when an implementer agent could build it without asking 
 - `workflows/*.md` — one spec per workflow.
 - `NOTES.md` — raw notes on the user's world: the tools they use, the channels they process, and their own terminology for both. When it is empty or thin, interview them about their world before specifying anything. Sharpen fuzzy terms into canonical ones as they surface, and record them here.
 
-> **Experimental:** This in-progress skill is pinned at `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`. Before acting, require either the user's direct invocation of this skill or an explicit yes to the router's experimental gate. Otherwise announce the status, ask once for approval, and stop until the user answers.
+> **Experimental:** This in-progress skill is pinned at `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`. Announce that status before use.
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:loop-me` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

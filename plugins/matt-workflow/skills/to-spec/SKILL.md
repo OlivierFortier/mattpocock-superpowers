@@ -1,6 +1,6 @@
 ---
 name: to-spec
-description: "Perform only the to-spec subflow when directly requested or delegated by Matt Workflow. Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed."
+description: "Turn a conversation into a spec"
 ---
 
 This skill takes the current conversation context and codebase understanding and produces a spec (you may know this document as a PRD). Do NOT interview the user — just synthesize what you already know.
@@ -73,6 +73,4 @@ Any further notes about the feature.
 
 </spec-template>
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:to-spec` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

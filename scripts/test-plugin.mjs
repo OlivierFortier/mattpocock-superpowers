@@ -30,9 +30,15 @@ const skillNames = [
 ];
 const experimental = ["batch-grill-me", "loop-me", "to-questionnaire", "wizard"];
 
+function parseJsonYamlScalar(line, label) {
+  const value = line.slice(line.indexOf(":") + 1).trim();
+  assert(value.startsWith('"'), `${label}: expected a quoted scalar`);
+  return JSON.parse(value);
+}
+
 const manifest = JSON.parse(await readFile(path.join(pluginRoot, ".codex-plugin", "plugin.json"), "utf8"));
 assert.equal(manifest.name, "matt-workflow");
-assert.equal(manifest.version, "0.1.0");
+assert.match(manifest.version, /^0\.1\.0(?:\+codex\.[a-zA-Z0-9.-]+)?$/);
 assert.equal(manifest.skills, "./skills/");
 assert.equal(manifest.license, "MIT");
 assert.deepEqual(manifest.interface.capabilities, ["Interactive", "Read", "Write"]);
@@ -67,8 +73,11 @@ for (const name of skillNames) {
   assert(!skill.includes("disable-model-invocation"), `${name}: non-portable invocation metadata`);
 
   if (name !== "using-matt-workflow") {
-    assert(skill.includes("## Matt Workflow boundary"), `${name}: missing subflow guard`);
-    assert(skill.includes(`$matt-workflow:${name}`), `${name}: missing qualified self-reference`);
+    assert(!skill.includes("## Matt Workflow boundary"), `${name}: duplicated router boundary`);
+    assert(
+      skill.includes("**Subflow:** Continue through this skill's completion criterion, then return to the caller."),
+      `${name}: missing concise subflow guard`,
+    );
   }
   for (const target of skillNames) {
     assert(!new RegExp(`(?<!\\.\\.)/${target}\\b`).test(skill), `${name}: unqualified /${target} reference`);
@@ -80,13 +89,22 @@ for (const name of skillNames) {
     assert(/allow_implicit_invocation:\s*true/.test(yaml), `${name}: router must be implicit`);
   } else {
     assert(/allow_implicit_invocation:\s*false/.test(yaml), `${name}: component must be explicit-only`);
+    const description = parseJsonYamlScalar(
+      frontmatter[1].split("\n").find((line) => line.startsWith("description:")),
+      `${name} description`,
+    );
+    const summaryLine = yaml.split("\n").find((line) => /^\s*short_description:/.test(line));
+    assert(summaryLine, `${name}: missing short_description`);
+    assert.equal(description, parseJsonYamlScalar(summaryLine, `${name} short_description`));
+    assert(description.length <= 80, `${name}: user-facing description is too long`);
+    assert(!/use when|delegat|directly requested/i.test(description), `${name}: description leaks model trigger prose`);
   }
 }
 
 for (const name of experimental) {
   const skill = await readFile(path.join(skillsRoot, name, "SKILL.md"), "utf8");
   assert(skill.includes("**Experimental:**"), `${name}: missing experimental notice`);
-  assert(skill.includes("explicit yes to the router's experimental gate"), `${name}: missing defensive approval gate`);
+  assert(skill.includes("This in-progress skill is pinned at"), `${name}: missing pinned status`);
 }
 
 const router = await readFile(path.join(skillsRoot, "using-matt-workflow", "SKILL.md"), "utf8");
@@ -99,7 +117,8 @@ for (const field of ["Route:", "Experimental capability:", "Next gate:", "Writes
 for (const rule of ["Plan Mode", "fresh implementation subagent", "sequentially", "whole-spec review"]) {
   assert(router.includes(rule), `router: missing ${rule} rule`);
 }
-assert(router.includes("The component skills are explicit-only"));
+assert(router.includes("Only `using-matt-workflow` is implicit"));
+assert(router.includes("## Completion criteria"));
 
 const setup = await readFile(path.join(skillsRoot, "setup-matt-pocock-skills", "SKILL.md"), "utf8");
 assert(setup.indexOf("If `AGENTS.md` exists") < setup.indexOf("Else if `CLAUDE.md` exists"));

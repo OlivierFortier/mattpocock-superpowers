@@ -1,6 +1,6 @@
 ---
 name: domain-modeling
-description: "Perform only the domain-modeling subflow when directly requested or delegated by Matt Workflow. Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, record an architectural decision, or when another skill needs to maintain the domain model."
+description: "Build and sharpen a domain model"
 ---
 
 # Domain Modeling
@@ -73,6 +73,4 @@ Only offer to create an ADR when all three are true:
 
 If any of the three is missing, skip the ADR. Use the format in [ADR-FORMAT.md](./ADR-FORMAT.md).
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:domain-modeling` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

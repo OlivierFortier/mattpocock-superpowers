@@ -1,6 +1,6 @@
 ---
 name: setup-matt-pocock-skills
-description: "Perform only the setup-matt-pocock-skills subflow when directly requested or delegated by Matt Workflow. Configure this repo for the engineering skills — set up its issue tracker, triage label vocabulary, and domain doc layout. Run once before first use of the other engineering skills."
+description: "Configure a repo for the skills"
 ---
 
 # Setup Matt Pocock's Skills
@@ -114,6 +114,4 @@ For "other" issue trackers, write `docs/agents/issue-tracker.md` from scratch us
 
 Tell the user the setup is complete and which engineering skills will now read from these files. Mention they can edit `docs/agents/*.md` directly later — re-running this skill is only necessary if they want to switch issue trackers or restart from scratch.
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:setup-matt-pocock-skills` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

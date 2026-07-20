@@ -1,6 +1,6 @@
 ---
 name: wizard
-description: "Perform only the wizard subflow when directly requested or delegated by Matt Workflow. Generate an interactive bash wizard that walks a human through a manual procedure — third-party setup, a one-off migration, an A→B state transition — opening URLs, capturing values, confirming each step, and writing .env files and GitHub Actions secrets."
+description: "Generate an interactive setup wizard"
 ---
 
 # Wizard
@@ -47,8 +47,6 @@ Hold the bar the template sets: open the URL before asking for its value, use `a
 
 When delegated, write the wizard to the OS temporary directory unless the user asks to retain it. Return its path and instructions, but never execute it automatically.
 
-> **Experimental:** This in-progress skill is pinned at `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`. Before acting, require either the user's direct invocation of this skill or an explicit yes to the router's experimental gate. Otherwise announce the status, ask once for approval, and stop until the user answers.
+> **Experimental:** This in-progress skill is pinned at `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`. Announce that status before use.
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:wizard` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

@@ -1,6 +1,6 @@
 ---
 name: finishing-a-development-branch
-description: "Perform only the finishing-a-development-branch subflow when directly requested or delegated by Matt Workflow. Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup"
+description: "Safely finish and integrate a development branch"
 ---
 
 # Finishing a Development Branch
@@ -240,6 +240,4 @@ git worktree prune  # Self-healing: clean up any stale registrations
 - `cd` to main repo root before worktree removal
 - Run `git worktree prune` after removal
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:finishing-a-development-branch` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

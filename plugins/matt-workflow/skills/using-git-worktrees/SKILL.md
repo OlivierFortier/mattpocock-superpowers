@@ -1,6 +1,6 @@
 ---
 name: using-git-worktrees
-description: "Perform only the using-git-worktrees subflow when directly requested or delegated by Matt Workflow. Use when starting feature work that needs isolation from current workspace or before executing implementation plans - ensures an isolated workspace exists via native tools or git worktree fallback"
+description: "Create or reuse an isolated Git worktree"
 ---
 
 # Using Git Worktrees
@@ -201,6 +201,4 @@ Ready to implement <feature-name>
 - Auto-detect and run project setup
 - Verify clean test baseline
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:using-git-worktrees` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

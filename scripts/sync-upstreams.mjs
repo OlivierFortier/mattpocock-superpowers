@@ -93,7 +93,30 @@ function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function normalizeFrontmatter(text, expectedName) {
+function parseYamlScalar(value, label) {
+  const scalar = value.trim();
+  if (scalar.startsWith('"')) return JSON.parse(scalar);
+  if (scalar.startsWith("'") && scalar.endsWith("'")) return scalar.slice(1, -1).replaceAll("''", "'");
+  if (scalar) return scalar;
+  throw new Error(`${label} must not be empty`);
+}
+
+async function readHumanSummary(directory, name) {
+  const agentFile = path.join(directory, "agents", "openai.yaml");
+  try {
+    const yaml = await readFile(agentFile, "utf8");
+    const match = yaml.match(/^\s*short_description:\s*(.+?)\s*$/m);
+    if (!match) throw new Error(`${name} is missing interface.short_description`);
+    return parseYamlScalar(match[1], `${name} short_description`);
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    const metadata = generatedAgentMetadata[name];
+    if (!metadata) throw new Error(`${name} is missing agents/openai.yaml`);
+    return metadata[1];
+  }
+}
+
+function normalizeFrontmatter(text, expectedName, humanSummary) {
   const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
   if (!match) throw new Error("SKILL.md is missing YAML frontmatter");
   const lines = match[1].split(/\r?\n/);
@@ -101,12 +124,7 @@ function normalizeFrontmatter(text, expectedName) {
   const description = lines.find((line) => line.startsWith("description:"));
   if (!name || !description) throw new Error("SKILL.md frontmatter needs name and description");
   if (name.slice(5).trim() !== expectedName) throw new Error(`${expectedName} has mismatched skill metadata`);
-  let summary = description.slice("description:".length).trim();
-  if ((summary.startsWith('"') && summary.endsWith('"')) || (summary.startsWith("'") && summary.endsWith("'"))) {
-    summary = summary.slice(1, -1);
-  }
-  const narrow = `Perform only the ${expectedName} subflow when directly requested or delegated by Matt Workflow. ${summary}`;
-  return `---\n${name}\ndescription: ${JSON.stringify(narrow)}\n---\n${text.slice(match[0].length)}`;
+  return `---\n${name}\ndescription: ${JSON.stringify(humanSummary)}\n---\n${text.slice(match[0].length)}`;
 }
 
 function qualifySkillReferences(text) {
@@ -136,12 +154,13 @@ function adaptSetup(text) {
   return text;
 }
 
-function addBoundary(text, name, commit) {
-  const notice = experimental.has(name)
-    ? `\n> **Experimental:** This in-progress skill is pinned at \`${commit}\`. Before acting, require either the user's direct invocation of this skill or an explicit yes to the router's experimental gate. Otherwise announce the status, ask once for approval, and stop until the user answers.\n`
-    : "";
-  const boundary = `\n## Matt Workflow boundary\n\nPerform only the \`$matt-workflow:${name}\` subflow, then return control to \`$matt-workflow:using-matt-workflow\`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.\n`;
-  return `${text.trimEnd()}\n${notice}${boundary}`;
+function addExperimentalNotice(text, name, commit) {
+  if (!experimental.has(name)) return text;
+  return `${text.trimEnd()}\n\n> **Experimental:** This in-progress skill is pinned at \`${commit}\`. Announce that status before use.\n`;
+}
+
+function addSubflowGuard(text) {
+  return `${text.trimEnd()}\n\n> **Subflow:** Continue through this skill's completion criterion, then return to the caller.\n`;
 }
 
 function addIntegration(text, name) {
@@ -156,12 +175,14 @@ function addIntegration(text, name) {
 
 async function adaptSkill(directory, name, commit) {
   const skillFile = path.join(directory, "SKILL.md");
+  const humanSummary = await readHumanSummary(directory, name);
   let text = await readFile(skillFile, "utf8");
-  text = normalizeFrontmatter(text, name).replaceAll("\r\n", "\n");
+  text = normalizeFrontmatter(text, name, humanSummary).replaceAll("\r\n", "\n");
   text = qualifySkillReferences(text);
   if (name === "setup-matt-pocock-skills") text = adaptSetup(text);
   text = addIntegration(text, name);
-  text = addBoundary(text, name, commit);
+  text = addExperimentalNotice(text, name, commit);
+  text = addSubflowGuard(text);
   await writeFile(skillFile, text, "utf8");
 
   const agentFile = path.join(directory, "agents", "openai.yaml");

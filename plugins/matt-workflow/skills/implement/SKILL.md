@@ -1,6 +1,6 @@
 ---
 name: implement
-description: "Perform only the implement subflow when directly requested or delegated by Matt Workflow. Implement a piece of work based on a spec or set of tickets."
+description: "Build work from a spec or tickets"
 ---
 
 Implement the work described by the user in the spec or tickets.
@@ -13,6 +13,4 @@ Once done, use [$matt-workflow:code-review](../code-review/SKILL.md) to review t
 
 Commit your work to the current branch.
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:implement` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

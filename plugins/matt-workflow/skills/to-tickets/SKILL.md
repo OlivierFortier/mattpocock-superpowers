@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: "Perform only the to-tickets subflow when directly requested or delegated by Matt Workflow. Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker — edges as text in one file per ticket locally, or native blocking links on a real tracker."
+description: "Split a plan into tracer-bullet tickets"
 ---
 
 # To Tickets
@@ -105,6 +105,4 @@ In either form, avoid specific file paths or code snippets — they go stale fas
 
 Work the frontier one ticket at a time with `[$matt-workflow:implement](../implement/SKILL.md)`, clearing context between tickets.
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:to-tickets` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

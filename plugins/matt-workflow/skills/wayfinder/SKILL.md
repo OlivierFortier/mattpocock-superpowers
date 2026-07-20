@@ -1,6 +1,6 @@
 ---
 name: wayfinder
-description: "Perform only the wayfinder subflow when directly requested or delegated by Matt Workflow. Plan a huge chunk of work — more than one agent session can hold — as a shared map of decision tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear."
+description: "Map a large effort as decision tickets"
 ---
 
 A loose idea has arrived — too big for one agent session, and wrapped in fog: the way from here to the **destination** isn't visible yet. Wayfinding is about finding that way, not charging at the destination. This skill charts the way as a **shared map** on the repo's issue tracker, then works its **decision tickets** — questions whose resolution is a decision, not slices of a build to execute — one at a time until the route is clear.
@@ -126,6 +126,4 @@ User invokes with a map (URL or number). A ticket is **optional** — without on
 
 The user may run unblocked tickets in parallel, so expect other sessions to be editing the tracker concurrently.
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:wayfinder` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

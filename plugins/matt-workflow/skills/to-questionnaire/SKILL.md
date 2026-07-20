@@ -1,6 +1,6 @@
 ---
 name: to-questionnaire
-description: "Perform only the to-questionnaire subflow when directly requested or delegated by Matt Workflow. Turn a decision you can't fully answer into a questionnaire for someone else to fill in."
+description: "Front-load questions into a doc for someone to answer"
 ---
 
 Turn something the user can't answer alone into a **questionnaire** — a Markdown document they hand to one person to fill in async, or fill out together over a meeting. The recipient holds knowledge the user lacks; the questionnaire pulls it out of them.
@@ -55,8 +55,6 @@ A closing catch-all: anything we didn't ask that we should know?
 
 When delegated, add a `## Return context` section naming the active issue, decision, or spec and the unresolved decision. Report the questionnaire path, pause the workflow, and resume that exact decision when answers arrive.
 
-> **Experimental:** This in-progress skill is pinned at `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`. Before acting, require either the user's direct invocation of this skill or an explicit yes to the router's experimental gate. Otherwise announce the status, ask once for approval, and stop until the user answers.
+> **Experimental:** This in-progress skill is pinned at `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`. Announce that status before use.
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:to-questionnaire` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.

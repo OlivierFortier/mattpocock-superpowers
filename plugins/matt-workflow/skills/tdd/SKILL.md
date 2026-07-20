@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "Perform only the tdd subflow when directly requested or delegated by Matt Workflow. Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions \"red-green-refactor\", or wants integration tests."
+description: "Test-driven red-green-refactor"
 ---
 
 # Test-Driven Development
@@ -35,6 +35,4 @@ Ask: "What's the public interface, and which seams should we test?"
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle.
 - **Refactoring is not part of the loop.** It belongs to the review stage (see the `$matt-workflow:code-review` skill), not the red → green implementation cycle.
 
-## Matt Workflow boundary
-
-Perform only the `$matt-workflow:tdd` subflow, then return control to `$matt-workflow:using-matt-workflow`. Do not classify or restart the top-level workflow. Direct invocation performs only this subflow.
+> **Subflow:** Continue through this skill's completion criterion, then return to the caller.
