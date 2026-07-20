@@ -114,26 +114,6 @@ The shared workflow is packaged as standard `SKILL.md` agent skills. No checkout
 npx --yes skills add OlivierFortier/mattpocock-superpowers --all --copy --global
 ```
 
-Publish the repository publicly at that GitHub URL before sharing this command; private repositories require authenticated Git access.
-
-If you prefer a platform-specific wrapper, run it directly from GitHub:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/OlivierFortier/mattpocock-superpowers/master/scripts/install-skills.sh | bash
-```
-
-```powershell
-irm https://raw.githubusercontent.com/OlivierFortier/mattpocock-superpowers/master/scripts/install-skills.ps1 | iex
-```
-
-The same scripts can also be run from a checkout:
-
-```powershell
-pwsh -File .\scripts\install-skills.ps1
-```
-
-Both wrappers install copied files globally across the supported agent directories. Re-run the command to update them.
-
 Use `npx skills add <source> --skill <name>` when only one workflow skill is needed. The CLI supports many agents through the common skills format; the repository's plugin-specific adapters remain available through their native plugin flows above.
 
 ## Use it
