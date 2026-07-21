@@ -4,8 +4,12 @@ Matt Workflow is a software-delivery plugin for coding agents. It combines selec
 
 ## Workflow
 
-```text
-request → decisions → spec → tickets → implementation → TDD → review → handoff
+```mermaid
+flowchart LR
+    request["Describe the request"] --> settled{"Small and settled?"}
+    settled -- "Yes" --> implementation["Implementation"]
+    settled -- "No" --> decisions["Decisions"] --> spec["Decision-complete spec"] --> tickets["Tracer-bullet tickets"] --> implementation
+    implementation --> tdd["TDD"] --> review["Review"] --> handoff["Handoff"]
 ```
 
 The `using-matt-workflow` skill is the router. It chooses the smallest route that fits:
@@ -18,11 +22,40 @@ The `using-matt-workflow` skill is the router. It chooses the smallest route tha
 
 Small, settled requests go directly to implementation. Larger or foggier work is shaped through decisions, a decision-complete spec, and independently implementable tickets before code is written.
 
+```mermaid
+flowchart TD
+    request["User describes the desired outcome"] --> router["using-matt-workflow router"]
+    router --> classify{"What kind of work is it?"}
+    classify -- "Concrete feature or change" --> delivery["Delivery"]
+    classify -- "Too large or foggy for one session" --> wayfinder["Wayfinder"]
+    classify -- "Recurring personal or operational activity" --> workflow["Workflow design"]
+    classify -- "Human-operated setup, migration, or credentials" --> wizard["Manual wizard"]
+    classify -- "Stakeholder must answer an unresolved question" --> questionnaire["Questionnaire"]
+    delivery --> next["Next gate or smallest suitable subflow"]
+    wayfinder --> next
+    workflow --> next
+    wizard --> next
+    questionnaire --> next
+```
+
 ### Control modes
 
 Human-in-the-loop is the default. The workflow pauses at design, ticket, experimental-capability, and branch-completion gates for the relevant user decision.
 
 Autonomous mode is available only when the user explicitly asks to run the workflow autonomously or end to end. The agent may then make scoped, reversible decisions, but still pauses for unavailable credentials, stakeholder answers, or authority for irreversible or high-risk external actions.
+
+```mermaid
+flowchart TD
+    start["Router selects a route"] --> autonomous{"User explicitly requests autonomous or end-to-end execution?"}
+    autonomous -- "No" --> human["Human-in-the-loop<br/>(default)"]
+    human --> gates["Pause at design, ticket,<br/>experimental-capability, and<br/>branch-completion gates"]
+    gates --> decision["User makes the relevant decision"]
+    autonomous -- "Yes" --> auto["Autonomous mode"]
+    auto --> scoped["Continue through scoped,<br/>reversible decisions"]
+    scoped --> blocker{"Credentials, stakeholder answer,<br/>or high-risk action needed?"}
+    blocker -- "Yes" --> pause["Pause and report the exact<br/>resume point"]
+    blocker -- "No" --> complete["Continue to route completion"]
+```
 
 Plan Mode is read-only: it can inspect the repository and present proposed artifacts, but it does not write files, apply patches, or change external state.
 
