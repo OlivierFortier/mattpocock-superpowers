@@ -17,7 +17,7 @@ Read `CONTEXT.md` before changing workflow language or domain concepts.
 
 ## Repository rules
 
-- `plugins/matt-workflow/skills/` contains generated, adapted upstream skills. Do not hand-edit those copies for durable changes; update the sync transformation or pinned upstream inputs, then regenerate and verify.
+- `skills/` contains generated, adapted upstream skills. Do not hand-edit those copies for durable changes; update the sync transformation or pinned upstream inputs, then regenerate and verify.
 - Keep the plugin manifests and marketplace entries consistent across the supported targets. Make the smallest target-specific change needed.
 - Preserve the pinned upstream revisions in `upstreams.lock.json`. Do not silently move pins.
 - Use Node.js standard-library facilities and the existing ESM setup before adding a dependency.

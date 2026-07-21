@@ -4,16 +4,19 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const pluginRoot = path.join(root, "plugins", "matt-workflow");
-const skillsRoot = path.join(pluginRoot, "skills");
+const pluginRoot = root;
+const skillsRoot = path.join(root, "skills");
+await assert.rejects(access(path.join(root, "plugins", "matt-workflow", "package.json")));
 const copilotManifest = JSON.parse(await readFile(path.join(pluginRoot, "plugin.json"), "utf8"));
 assert.equal(copilotManifest.name, "matt-workflow");
 assert.equal(copilotManifest.version, "0.1.0");
 assert.equal(copilotManifest.skills, "skills/");
-assert.equal(copilotManifest.agents, "copilot/agents/");
+assert.equal(copilotManifest.agents, "agents/");
 assert.equal(copilotManifest.license, "MIT");
 assert.equal("interface" in copilotManifest, false);
-const copilotAgent = (await readFile(path.join(pluginRoot, "copilot", "agents", "matt-workflow.agent.md"), "utf8"))
+await access(path.join(root, copilotManifest.agents));
+await access(path.join(root, copilotManifest.skills));
+const copilotAgent = (await readFile(path.join(pluginRoot, "agents", "matt-workflow.agent.md"), "utf8"))
   .replaceAll("\r\n", "\n");
 assert(copilotAgent.startsWith("---\nname: matt-workflow\n"));
 assert(copilotAgent.includes("disable-model-invocation: true"));
@@ -58,12 +61,13 @@ assert.equal(manifest.interface.defaultPrompt.length, 3);
 assert.equal("apps" in manifest, false);
 assert.equal("mcpServers" in manifest, false);
 assert.equal("hooks" in manifest, false);
+await access(path.join(root, "skills"));
 
 const marketplace = JSON.parse(await readFile(path.join(root, ".agents", "plugins", "marketplace.json"), "utf8"));
 assert.equal(marketplace.name, "matt-workflow-dev");
 assert.deepEqual(marketplace.plugins[0], {
   name: "matt-workflow",
-  source: { source: "local", path: "./plugins/matt-workflow" },
+  source: { source: "local", path: "." },
   policy: { installation: "AVAILABLE", authentication: "ON_INSTALL" },
   category: "Developer Tools",
 });
@@ -74,7 +78,7 @@ assert.deepEqual(copilotMarketplace.plugins[0], {
   name: "matt-workflow",
   description: "A guided software-delivery workflow built from Matt Pocock's skills and Superpowers worktree discipline.",
   version: "0.1.0",
-  source: "./plugins/matt-workflow",
+  source: "./",
   author: {
     name: "Olivier Fortier",
     email: "olivier.fortier@outlook.com",
@@ -84,6 +88,7 @@ assert.deepEqual(copilotMarketplace.plugins[0], {
   keywords: ["engineering", "workflow", "skills", "tdd", "code-review"],
   category: "Developer Tools",
 });
+await access(path.resolve(root, marketplace.plugins[0].source.path));
 
 const claudeManifest = JSON.parse(await readFile(path.join(pluginRoot, ".claude-plugin", "plugin.json"), "utf8"));
 assert.equal(claudeManifest.name, "matt-workflow");
@@ -102,25 +107,29 @@ const claudeMarketplace = JSON.parse(await readFile(path.join(root, ".claude-plu
 assert.equal(claudeMarketplace.name, "matt-workflow-marketplace");
 assert.equal(claudeMarketplace.plugins.length, 1);
 assert.equal(claudeMarketplace.plugins[0].name, "matt-workflow");
-assert.equal(claudeMarketplace.plugins[0].source, "./plugins/matt-workflow");
+assert.equal(claudeMarketplace.plugins[0].source, "./");
+await access(path.resolve(root, claudeMarketplace.plugins[0].source));
+await access(path.resolve(root, copilotMarketplace.plugins[0].source));
 
 const piPackage = JSON.parse(await readFile(path.join(pluginRoot, "package.json"), "utf8"));
 assert.equal(piPackage.name, "matt-workflow");
 assert.equal(piPackage.keywords.includes("pi-package"), true);
 assert.deepEqual(piPackage.pi, { skills: ["./skills"] });
-assert.equal(piPackage.main, "./opencode/index.ts");
+assert.equal(piPackage.main, "./.opencode/plugins/index.ts");
 assert.deepEqual(piPackage.dependencies, { "@opencode-ai/plugin": "1.18.4" });
+await access(path.resolve(root, piPackage.main));
+await access(path.join(root, ".opencode", "INSTALL.md"));
 
-const opencodeLoader = (await readFile(path.join(pluginRoot, "opencode", "skill-loader.mjs"), "utf8"))
+const opencodeLoader = (await readFile(path.join(pluginRoot, ".opencode", "plugins", "skill-loader.mjs"), "utf8"))
   .replaceAll("\r\n", "\n");
-const opencodeEntrypoint = (await readFile(path.join(pluginRoot, "opencode", "index.ts"), "utf8"))
+const opencodeEntrypoint = (await readFile(path.join(pluginRoot, ".opencode", "plugins", "index.ts"), "utf8"))
   .replaceAll("\r\n", "\n");
 assert(opencodeLoader.includes("export async function discoverSkillNames"));
 assert(opencodeLoader.includes("export async function loadSkill"));
 assert(opencodeEntrypoint.includes("matt_workflow_skill"));
 assert(opencodeEntrypoint.includes("@opencode-ai/plugin"));
 const { discoverSkillNames, loadSkill } = await import(
-  pathToFileURL(path.join(pluginRoot, "opencode", "skill-loader.mjs")).href,
+  pathToFileURL(path.join(pluginRoot, ".opencode", "plugins", "skill-loader.mjs")).href,
 );
 assert.deepEqual(await discoverSkillNames(), skillNames);
 assert.equal(await loadSkill("using-matt-workflow"), await readFile(path.join(skillsRoot, "using-matt-workflow", "SKILL.md"), "utf8"));

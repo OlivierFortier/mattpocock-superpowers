@@ -8,7 +8,7 @@
       "name": "matt-workflow",
       "source": {
         "source": "local",
-        "path": "./plugins/matt-workflow"
+        "path": "."
       },
       "policy": {
         "installation": "AVAILABLE",

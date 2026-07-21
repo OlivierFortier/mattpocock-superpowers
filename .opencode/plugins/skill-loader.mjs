@@ -2,7 +2,7 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import { dirname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const skillsRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../skills");
+const skillsRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../skills");
 
 export async function discoverSkillNames() {
   const entries = await readdir(skillsRoot, { withFileTypes: true });

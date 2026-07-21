@@ -13,7 +13,7 @@
       "name": "matt-workflow",
       "description": "A guided software-delivery workflow built from Matt Pocock's skills and Superpowers worktree discipline.",
       "version": "0.1.0",
-      "source": "./plugins/matt-workflow",
+      "source": "./",
       "author": {
         "name": "Olivier Fortier",
         "email": "olivier.fortier@outlook.com",

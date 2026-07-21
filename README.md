@@ -82,7 +82,7 @@ Invoke the router as `/matt-workflow:using-matt-workflow`. Other skills use the 
 For local development or testing, load the checkout directly:
 
 ```bash
-claude --plugin-dir ./plugins/matt-workflow
+claude --plugin-dir .
 ```
 
 ### GitHub Copilot CLI
@@ -104,12 +104,47 @@ Use the `matt-workflow` agent/router or invoke a qualified skill such as:
 /matt-workflow/grilling
 ```
 
+For local development or testing, install the root package directly:
+
+```bash
+copilot plugin install .
+```
+
+### OpenCode
+
+Add the git-backed package to `opencode.json`:
+
+```json
+{
+  "plugin": [
+    "matt-workflow@git+https://github.com/OlivierFortier/mattpocock-superpowers.git"
+  ]
+}
+```
+
+Restart OpenCode, then use the `matt_workflow_skill` tool to list or load a skill.
+For local development, use `{"plugin":["."]}` from the checkout; see [`.opencode/INSTALL.md`](./.opencode/INSTALL.md).
+
+### Pi
+
+Install the repository as a Pi package:
+
+```bash
+pi install git:github.com/OlivierFortier/mattpocock-superpowers
+```
+
+For local development, load the checkout temporarily:
+
+```bash
+pi -e .
+```
+
 ### Generic agent skills
 
 The shared workflow is packaged as standard `SKILL.md` files. Vercel's [`skills` CLI](https://skills.sh/docs/cli) fetches the public GitHub repository and installs the skills globally:
 
 ```bash
-npx --yes skills add OlivierFortier/mattpocock-superpowers --all --copy --global
+npx skills add OlivierFortier/mattpocock-superpowers
 ```
 
 Use `npx skills add <source> --skill <name>` to install one workflow skill. The repository's plugin-specific adapters remain available through the native plugin flows above.
@@ -186,12 +221,12 @@ Experimental skills are opt-in and must be announced before use. A wizard is ret
 
 Matt Workflow provides:
 
-- Shared workflow skills under `plugins/matt-workflow/skills/`.
-- A Codex plugin manifest at `plugins/matt-workflow/.codex-plugin/plugin.json`.
-- A Claude Code plugin manifest at `plugins/matt-workflow/.claude-plugin/plugin.json`.
-- A Copilot plugin manifest and router agent under `plugins/matt-workflow/`.
-- An OpenCode adapter under `plugins/matt-workflow/opencode/`.
-- Pi package metadata in `plugins/matt-workflow/package.json`.
+- Shared workflow skills under `skills/`.
+- A Codex plugin manifest at `.codex-plugin/plugin.json`.
+- A Claude Code plugin manifest at `.claude-plugin/plugin.json`.
+- A Copilot plugin manifest at `plugin.json` and router agent under `agents/`.
+- An OpenCode adapter under `.opencode/plugins/`.
+- Pi package metadata in the root `package.json`.
 
 It does not add MCP servers, connectors, apps, or lifecycle hooks. The host's permissions, sandbox, approval policy, authentication, and external integrations still apply.
 
@@ -215,7 +250,7 @@ npm run sync:check  # verify generated skills match the pinned upstreams
 npm run sync        # regenerate vendored skills from the pinned upstreams
 ```
 
-The files under `plugins/matt-workflow/skills/` are generated, adapted upstream skills. Do not hand-edit those copies for durable changes. Update the synchronization transformation or the pinned upstream inputs intentionally, then regenerate and run `npm test`.
+The files under `skills/` are generated, adapted upstream skills. Do not hand-edit those copies for durable changes. Update the synchronization transformation or the pinned upstream inputs intentionally, then regenerate and run `npm test`.
 
 ## Attribution and license
 
@@ -226,4 +261,4 @@ The plugin vendors and adapts selected material from:
 - [Matt Pocock's skills](https://github.com/mattpocock/skills), pinned at commit `9603c1cc8118d08bc1b3bf34cf714f62178dea3b`.
 - [Superpowers](https://github.com/obra/superpowers), pinned to v6.1.1 commit `d884ae04edebef577e82ff7c4e143debd0bbec99`.
 
-See [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) and the copied license texts under `plugins/matt-workflow/third-party/` for the complete notices.
+See [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) and the copied license texts under `third-party/` for the complete notices.

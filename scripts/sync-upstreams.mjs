@@ -8,8 +8,7 @@ import { promisify } from "node:util";
 
 const exec = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const plugin = path.join(root, "plugins", "matt-workflow");
-const skillsRoot = path.join(plugin, "skills");
+const skillsRoot = path.join(root, "skills");
 const lock = JSON.parse(await readFile(path.join(root, "upstreams.lock.json"), "utf8"));
 
 const mattSkills = [
@@ -281,14 +280,14 @@ try {
     for (const [name] of [...mattSkills, ...superpowersSkills]) {
       await compare(path.join(rendered, name), path.join(skillsRoot, name), name);
     }
-    await compare(renderedLicenses, path.join(plugin, "third-party"), "third-party licenses");
+    await compare(renderedLicenses, path.join(root, "third-party"), "third-party licenses");
     console.log("Vendored skills match pinned upstreams.");
   } else {
     await mkdir(skillsRoot, { recursive: true });
     for (const [name] of [...mattSkills, ...superpowersSkills]) {
       await replaceDirectory(path.join(rendered, name), path.join(skillsRoot, name));
     }
-    const thirdParty = path.join(plugin, "third-party");
+    const thirdParty = path.join(root, "third-party");
     await rm(thirdParty, { recursive: true, force: true });
     await cp(renderedLicenses, thirdParty, { recursive: true });
     console.log(`Synced ${mattSkills.length + superpowersSkills.length} skills from pinned upstreams.`);
